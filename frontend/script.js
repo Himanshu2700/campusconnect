@@ -1,3 +1,4 @@
+const API_BASE = 'https://campusconnect-rfxc.onrender.com/api';
 // ============================================================
 // CampusConnect — script.js
 // Frontend logic: Auth, API calls, Rendering, Interactions
