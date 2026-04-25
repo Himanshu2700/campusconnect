@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CampusConnect — Event & Placement Portal</title>
+  <link rel="stylesheet" href="style.css"/>
+  <!-- Google Fonts: Syne (display) + DM Sans (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Lucide Icons via CDN -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     AUTH SCREEN (Login / Signup)
+═══════════════════════════════════════════════════ -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-bg">
+    <div class="auth-blob blob-1"></div>
+    <div class="auth-blob blob-2"></div>
+    <div class="auth-blob blob-3"></div>
+  </div>
+
+  <div class="auth-container">
+    <!-- Brand -->
+    <div class="auth-brand">
+      <div class="brand-icon">⚡</div>
+      <h1>CampusConnect</h1>
+      <p>Your college. Your events. Your future.</p>
+    </div>
+
+    <!-- Tab Toggle -->
+    <div class="auth-tabs">
+      <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginForm" class="auth-form active">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" placeholder="you@college.edu" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" />
+      </div>
+      <button class="btn-primary full-width" onclick="handleLogin()">
+        Sign In <span>→</span>
+      </button>
+      <p class="auth-hint">Demo Admin: admin@college.edu / admin123</p>
+    </div>
+
+    <!-- Signup Form -->
+    <div id="signupForm" class="auth-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signupName" placeholder="John Doe" />
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <select id="signupRole" onchange="toggleStudentFields()">
+            <option value="student">Student</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="signupEmail" placeholder="you@college.edu" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signupPassword" placeholder="Min 6 characters" />
+      </div>
+      <!-- Student-only fields -->
+      <div id="studentFields" class="form-row">
+        <div class="form-group">
+          <label>Branch</label>
+          <select id="signupBranch">
+            <option value="CSE">CSE</option>
+            <option value="ECE">ECE</option>
+            <option value="ME">ME</option>
+            <option value="CE">CE</option>
+            <option value="EE">EE</option>
+            <option value="IT">IT</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>CGPA</label>
+          <input type="number" id="signupCgpa" placeholder="e.g. 8.5" min="0" max="10" step="0.1"/>
+        </div>
+      </div>
+      <button class="btn-primary full-width" onclick="handleSignup()">
+        Create Account <span>→</span>
+      </button>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="authAlert" class="auth-alert hidden"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MAIN APP (after login)
+═══════════════════════════════════════════════════ -->
+<div id="appScreen" class="app-screen hidden">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon-sm">⚡</span>
+      <span>CampusConnect</span>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">JD</div>
+      <div>
+        <div class="user-name" id="sidebarName">John Doe</div>
+        <div class="user-role-badge" id="sidebarRole">Student</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+      </a>
+      <a class="nav-item" onclick="showPage('events')" data-page="events">
+        <i data-lucide="calendar"></i> Events
+      </a>
+      <a class="nav-item" onclick="showPage('placements')" data-page="placements">
+        <i data-lucide="briefcase"></i> Placements
+      </a>
+      <!-- Admin only -->
+      <a class="nav-item admin-only hidden" onclick="showPage('applications')" data-page="applications">
+        <i data-lucide="file-text"></i> Applications
+      </a>
+      <a class="nav-item admin-only hidden" onclick="showPage('users')" data-page="users">
+        <i data-lucide="users"></i> All Users
+      </a>
+      <!-- Student only -->
+      <a class="nav-item student-only hidden" onclick="showPage('myapps')" data-page="myapps">
+        <i data-lucide="clipboard-list"></i> My Applications
+      </a>
+    </nav>
+
+    <button class="logout-btn" onclick="handleLogout()">
+      <i data-lucide="log-out"></i> Sign Out
+    </button>
+  </aside>
+
+  <!-- ── Mobile Header ── -->
+  <header class="mobile-header">
+    <button onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+    <span>CampusConnect</span>
+    <div class="user-avatar-sm" id="mobileAvatar">JD</div>
+  </header>
+
+  <!-- ── Main Content ── -->
+  <main class="main-content" id="mainContent">
+
+    <!-- Global toast notification -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- ── DASHBOARD PAGE ─────────────────────────── -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-header">
+        <div>
+          <h2>Dashboard</h2>
+          <p id="dashGreeting">Welcome back!</p>
+        </div>
+      </div>
+
+      <!-- Stats Grid (admin) -->
+      <div id="adminStats" class="stats-grid hidden">
+        <div class="stat-card">
+          <div class="stat-icon" style="--c:#6C63FF">👥</div>
+          <div class="stat-info">
+            <span id="statStudents">0</span>
+            <label>Total Students</label>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="--c:#F59E0B">📅</div>
+          <div class="stat-info">
+            <span id="statEvents">0</span>
+            <label>Total Events</label>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="--c:#10B981">💼</div>
+          <div class="stat-info">
+            <span id="statPlacements">0</span>
+            <label>Job Openings</label>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="--c:#EF4444">🎯</div>
+          <div class="stat-info">
+            <span id="statSelected">0</span>
+            <label>Students Placed</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student stats -->
+      <div id="studentStats" class="stats-grid hidden">
+        <div class="stat-card">
+          <div class="stat-icon" style="--c:#6C63FF">📅</div>
+          <div class="stat-info">
+            <span id="studentStatEvents">0</span>
+            <label>Events Available</label>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="--c:#10B981">💼</div>
+          <div class="stat-info">
+            <span id="studentStatJobs">0</span>
+            <label>Job Openings</label>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="--c:#F59E0B">📋</div>
+          <div class="stat-info">
+            <span id="studentStatApps">0</span>
+            <label>My Applications</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent section -->
+      <div class="dashboard-grid">
+        <div class="dash-section">
+          <h3>Upcoming Events</h3>
+          <div id="recentEvents" class="list-container"></div>
+        </div>
+        <div class="dash-section">
+          <h3>Latest Placements</h3>
+          <div id="recentPlacements" class="list-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EVENTS PAGE ─────────────────────────────── -->
+    <div id="page-events" class="page">
+      <div class="page-header">
+        <div>
+          <h2>Events</h2>
+          <p>Discover and register for campus events</p>
+        </div>
+        <button class="btn-primary admin-only hidden" onclick="openModal('eventModal')">
+          + Add Event
+        </button>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <input type="text" id="eventSearch" placeholder="Search events..." oninput="filterEvents()" />
+        <select id="eventCategoryFilter" onchange="filterEvents()">
+          <option value="">All Categories</option>
+          <option value="Technical">Technical</option>
+          <option value="Cultural">Cultural</option>
+          <option value="Sports">Sports</option>
+          <option value="Workshop">Workshop</option>
+          <option value="Seminar">Seminar</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div id="eventsGrid" class="cards-grid"></div>
+    </div>
+
+    <!-- ── PLACEMENTS PAGE ────────────────────────── -->
+    <div id="page-placements" class="page">
+      <div class="page-header">
+        <div>
+          <h2>Placements</h2>
+          <p>Explore job opportunities from top companies</p>
+        </div>
+        <button class="btn-primary admin-only hidden" onclick="openModal('placementModal')">
+          + Add Company
+        </button>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="placementSearch" placeholder="Search companies or roles..." oninput="filterPlacements()" />
+        <select id="placementStatusFilter" onchange="filterPlacements()">
+          <option value="">All Status</option>
+          <option value="Open">Open</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </div>
+
+      <div id="placementsGrid" class="cards-grid"></div>
+    </div>
+
+    <!-- ── APPLICATIONS PAGE (Admin) ─────────────── -->
+    <div id="page-applications" class="page">
+      <div class="page-header">
+        <div>
+          <h2>All Applications</h2>
+          <p>Review and manage student job applications</p>
+        </div>
+      </div>
+      <div id="applicationsTable" class="table-wrapper"></div>
+    </div>
+
+    <!-- ── USERS PAGE (Admin) ────────────────────── -->
+    <div id="page-users" class="page">
+      <div class="page-header">
+        <div>
+          <h2>All Users</h2>
+          <p>Manage registered students and admins</p>
+        </div>
+      </div>
+      <div id="usersTable" class="table-wrapper"></div>
+    </div>
+
+    <!-- ── MY APPLICATIONS PAGE (Student) ───────── -->
+    <div id="page-myapps" class="page">
+      <div class="page-header">
+        <div>
+          <h2>My Applications</h2>
+          <p>Track your placement application status</p>
+        </div>
+      </div>
+      <div id="myAppsGrid" class="cards-grid"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════════════ -->
+
+<!-- Add / Edit Event Modal -->
+<div id="eventModal" class="modal-overlay hidden" onclick="handleOverlayClick(event, 'eventModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="eventModalTitle">Add Event</h3>
+      <button class="modal-close" onclick="closeModal('eventModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eventId" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="eventTitle" placeholder="Event title" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="eventCategory">
+            <option value="Technical">Technical</option>
+            <option value="Cultural">Cultural</option>
+            <option value="Sports">Sports</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Seminar">Seminar</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="eventDescription" rows="3" placeholder="Event description..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date & Time</label>
+          <input type="datetime-local" id="eventDate" />
+        </div>
+        <div class="form-group">
+          <label>Venue</label>
+          <input type="text" id="eventVenue" placeholder="e.g. Auditorium" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Max Seats</label>
+        <input type="number" id="eventMaxSeats" placeholder="100" value="100" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('eventModal')">Cancel</button>
+      <button class="btn-primary" onclick="saveEvent()">Save Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit Placement Modal -->
+<div id="placementModal" class="modal-overlay hidden" onclick="handleOverlayClick(event, 'placementModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="placementModalTitle">Add Placement</h3>
+      <button class="modal-close" onclick="closeModal('placementModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="placementId" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Company Name</label>
+          <input type="text" id="placementCompany" placeholder="e.g. Google" />
+        </div>
+        <div class="form-group">
+          <label>Job Role</label>
+          <input type="text" id="placementRole" placeholder="e.g. SDE Intern" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="placementDesc" rows="3" placeholder="Job description..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Package (CTC)</label>
+          <input type="text" id="placementPackage" placeholder="e.g. 12 LPA" />
+        </div>
+        <div class="form-group">
+          <label>Min CGPA</label>
+          <input type="number" id="placementCgpa" placeholder="e.g. 7.5" min="0" max="10" step="0.1"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Eligible Branches (comma-separated)</label>
+          <input type="text" id="placementBranches" placeholder="CSE, ECE, IT" />
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="placementStatus">
+            <option value="Open">Open</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Application Deadline</label>
+          <input type="date" id="placementDeadline" />
+        </div>
+        <div class="form-group">
+          <label>Drive Date</label>
+          <input type="date" id="placementDriveDate" />
+        </div>
+      </div>
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" id="placementBacklogs" />
+          Backlogs Allowed
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('placementModal')">Cancel</button>
+      <button class="btn-primary" onclick="savePlacement()">Save Placement</button>
+    </div>
+  </div>
+</div>
+
+<!-- Update Application Status Modal (Admin) -->
+<div id="statusModal" class="modal-overlay hidden" onclick="handleOverlayClick(event, 'statusModal')">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3>Update Status</h3>
+      <button class="modal-close" onclick="closeModal('statusModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="statusAppId" />
+      <div class="form-group">
+        <label>Application Status</label>
+        <select id="statusSelect">
+          <option value="Applied">Applied</option>
+          <option value="Shortlisted">Shortlisted</option>
+          <option value="Interview Scheduled">Interview Scheduled</option>
+          <option value="Selected">Selected</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <textarea id="statusNotes" rows="2" placeholder="Add a note..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('statusModal')">Cancel</button>
+      <button class="btn-primary" onclick="updateAppStatus()">Update</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
