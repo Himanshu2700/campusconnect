@@ -5,7 +5,7 @@ const API_BASE = 'https://campusconnect-rfxc.onrender.com/api';
 // ============================================================
 
 // ─── Configuration ────────────────────────────────────────
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://campusconnect-rfxc.onrender.com/api';
 
 // ─── App State ────────────────────────────────────────────
 let currentUser = null;  // Logged-in user object
