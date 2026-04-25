@@ -6,6 +6,7 @@ const API_BASE = 'https://campusconnect-rfxc.onrender.com/api';
 
 // ─── Configuration ────────────────────────────────────────
 
+
 // ─── App State ────────────────────────────────────────────
 let currentUser = null;  // Logged-in user object
 let allEvents = [];      // Cache for filtering
